@@ -10,6 +10,7 @@ from datetime import datetime, timedelta
 from fastapi import FastAPI, Request, HTTPException, Depends, Header, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field, validator
 import uvicorn
 
@@ -417,7 +418,10 @@ async def toggle_anomaly(config: AnomalyConfigRequest, authenticated: bool = Dep
             "kp_index": sat_state.kp_index,
             "dst_index": sat_state.dst_index
         }
-    }
+# Mount static files for React frontend production build
+frontend_dist_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend", "dist"))
+if os.path.exists(frontend_dist_dir):
+    app.mount("/", StaticFiles(directory=frontend_dist_dir, html=True), name="static")
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

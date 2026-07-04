@@ -9,7 +9,7 @@ import {
 } from './mockSimulator';
 
 // Support production deployments with external API hosts, fallback to localhost:8000
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 // Global flag to persist mock mode once activated by a connection failure
 let useMockMode = false;

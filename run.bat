@@ -18,8 +18,12 @@ start "Space Weather API Backend" cmd /k "cd backend && python main.py"
 :: Launch the Vite React Frontend dev server in a separate cmd window
 start "Space Weather React UI" cmd /k "cd frontend && npm run dev"
 
+:: Open default browser automatically
+timeout /t 2 >nul
+start http://localhost:5173
+
 echo   [!] All services started! 
-echo   [!] Please open your browser and navigate to: http://localhost:5173
+echo   [!] Opening http://localhost:5173 in your default browser...
 echo.
 echo ===================================================================
 pause

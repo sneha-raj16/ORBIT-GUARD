@@ -8,7 +8,7 @@ import { HistoricalChart, ComparisonChart, ForecastChart, ChartControls } from '
 import ModelPerformance from './components/ModelPerformance';
 import SecurityControl from './components/SecurityControl';
 import AboutUs from './components/AboutUs';
-import { getStatus, getPredictions, getHistorical, getActualVsPredicted, getMetrics } from './utils/api';
+import { getStatus, getPredictions, getHistorical, getActualVsPredicted, getMetrics, downloadPredictionsCsv } from './utils/api';
 import { Calendar, Percent, ShieldCheck, Download, Flame, HelpCircle } from 'lucide-react';
 
 export default function App() {
@@ -81,10 +81,10 @@ export default function App() {
     setRefreshCount(prev => prev + 1);
   };
 
-  const handleCsvDownload = () => {
-    const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
-    window.open(`${apiBase}/api/download-csv`, '_blank');
+  const handleCsvDownload = async () => {
+    await downloadPredictionsCsv();
   };
+
 
   if (isLoading && !statusData) {
     return (

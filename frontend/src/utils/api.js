@@ -132,3 +132,46 @@ export async function triggerAnomaly(enableAnomaly, customSpeed = null, customKp
     return setLocalAnomaly(enableAnomaly, customSpeed, customKp, customDst);
   }
 }
+
+/**
+ * Download prediction forecast data in CSV format (works live or standalone fallback)
+ */
+export async function downloadPredictionsCsv() {
+  if (!useMockMode && API_BASE_URL) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/download-csv`);
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'goes16_flux_predictions.csv';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        return;
+      }
+    } catch (e) {
+      console.warn("Backend CSV endpoint unreachable, using client-side CSV generator");
+    }
+  }
+
+  // Client-side CSV generation fallback
+  const mockPredictions = generateMockPredictions();
+  let csvContent = "Forecast Horizon,Predicted Electron Flux (pfu),Confidence Interval Lower Bound (pfu),Confidence Interval Upper Bound (pfu),Generated Time (IST)\n";
+  
+  const nowStr = new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+  mockPredictions.forecast_12h.forEach(item => {
+    csvContent += `"${item.hour}",${item.value},${item.lower_ci},${item.upper_ci},"${nowStr}"\n`;
+  });
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', 'goes16_flux_predictions.csv');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+

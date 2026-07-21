@@ -64,7 +64,7 @@ export default function App() {
     fetchDynamicData();
   }, [refreshCount]);
 
-  // Set up 5-second polling loop for real-time telemetry updates
+  // Set up 2-second polling loop for live real-time telemetry updates
   useEffect(() => {
     const interval = setInterval(() => {
       fetchDynamicData();
@@ -73,7 +73,7 @@ export default function App() {
         getHistorical().then(setHistoricalData).catch(console.error);
         getActualVsPredicted().then(setComparisonData).catch(console.error);
       }
-    }, 5000);
+    }, 2000);
     return () => clearInterval(interval);
   }, [refreshCount]);
 
